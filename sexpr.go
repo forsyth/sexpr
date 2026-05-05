@@ -377,44 +377,44 @@ type Reader struct {
 	err    error
 }
 
-func (r *Reader) get() rune {
-	for r.nb < utf8.UTFMax && !utf8.FullRune(r.buf[0:r.nb]) {
-		if r.err != nil {
+func (rd *Reader) get() rune {
+	for rd.nb < utf8.UTFMax && !utf8.FullRune(rd.buf[0:rd.nb]) {
+		if rd.err != nil {
 			return eof
 		}
-		n, err := r.rd.Read(r.buf[r.nb : r.nb+1])
+		n, err := rd.rd.Read(rd.buf[rd.nb : rd.nb+1])
 		if err != nil {
-			r.err = err
+			rd.err = err
 			if n == 0 {
 				return eof
 			}
 		}
-		r.nb += n
+		rd.nb += n
 	}
-	r.offset++
-	c, w := utf8.DecodeRune(r.buf[0:r.nb])
-	r.nb = 0
-	r.w = w
+	rd.offset++
+	c, w := utf8.DecodeRune(rd.buf[0:rd.nb])
+	rd.nb = 0
+	rd.w = w
 	fmt.Printf("[%c]", c)
 	return c
 }
 
-func (r *Reader) unget() {
-	if r.err != nil {
+func (rd *Reader) unget() {
+	if rd.err != nil {
 		return
 	}
-	r.nb = r.w
-	r.offset--
+	rd.nb = rd.w
+	rd.offset--
 }
 
 // readFull reads exactly n bytes from the input.
 // It is used only when the unget buffer is empty.
-func (r *Reader) readFull(buf []byte) error {
-	if r.err != nil {
-		return r.err
+func (rd *Reader) readFull(buf []byte) error {
+	if rd.err != nil {
+		return rd.err
 	}
-	_, err := io.ReadFull(r.rd, buf)
-	r.err = err
+	_, err := io.ReadFull(rd.rd, buf)
+	rd.err = err
 	return err
 }
 
