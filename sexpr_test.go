@@ -1,11 +1,11 @@
-package sexprs_test
+package sexpr_test
 
 import (
 	"bufio"
 	"os"
 	"testing"
 
-	"github.com/forsyth/sexprs"
+	"github.com/forsyth/sexpr"
 )
 
 func TestSExprs(t *testing.T) {
@@ -19,14 +19,14 @@ func TestSExprs(t *testing.T) {
 	for lines.Scan() {
 		l := lines.Text()
 		t.Logf("<-- %s", l)
-		e, _, err := sexprs.Parse(lines.Text())
+		e, _, err := sexpr.Parse(lines.Text())
 		if err != nil {
 			t.Errorf("failed %q: %s", lines.Text(), err)
 			continue
 		}
-		b64 := sexprs.Base64(e, sexprs.Canonical)
+		b64 := sexpr.Base64(e, sexprs.Canonical)
 		t.Logf("--> %s [%s]", e.String(), b64)
-		x, _, err := sexprs.Parse(b64)
+		x, _, err := sexpr.Parse(b64)
 		if err != nil {
 			t.Errorf("b64 failed %q: %s", b64, err)
 			continue

@@ -139,4 +139,4 @@ the innermost list.
 
 [Rivest's Internet Draft]: https://github.com/forsyth/sexprs/lib/sexp
 */
-package sexprs
+package sexpr

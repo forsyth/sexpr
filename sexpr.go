@@ -1,4 +1,4 @@
-package sexprs
+package sexpr
 
 import (
 	"bytes"
