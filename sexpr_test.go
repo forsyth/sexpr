@@ -24,7 +24,7 @@ func TestSExprs(t *testing.T) {
 			t.Errorf("failed %q: %s", lines.Text(), err)
 			continue
 		}
-		b64 := sexpr.Base64(e, sexprs.Canonical)
+		b64 := sexpr.Base64(e, sexpr.Canonical)
 		t.Logf("--> %s [%s]", e.String(), b64)
 		x, _, err := sexpr.Parse(b64)
 		if err != nil {
