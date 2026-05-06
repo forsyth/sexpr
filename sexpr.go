@@ -106,6 +106,8 @@ func (s *String) Els() []Expr {
 // String and Binary compare byte strings.
 func (s *String) Equal(e Expr) bool {
 	switch t := e.(type) {
+	case nil:
+		return s == nil
 	case *String:
 		return s.S == t.S && s.Hint == t.Hint
 	case *Binary:
@@ -183,6 +185,8 @@ func (b *Binary) Op() string {
 // String and Binary compare byte strings.
 func (b *Binary) Equal(e Expr) bool {
 	switch t := e.(type) {
+	case nil:
+		return b == nil
 	case *String:
 		return bytes.Equal([]byte(t.S), b.Data) && b.Hint == t.Hint
 	case *Binary:
@@ -439,18 +443,18 @@ func (rd *Reader) Read() (Expr, error) {
 }
 
 // Parse parses the given string as an S-expression.,
-// It returns the expression and any trailing text, or it returns an error.
-func Parse(s string) (Expr, string, error) {
+// It returns the expression or an error.
+func Parse(s string) (Expr, error) {
 	rd := NewReader(strings.NewReader(s))
 	e, err := rd.Read()
 	if err != nil {
-		return nil, "", err
+		return nil, err
 	}
-	l := int(rd.offset)
-	if l > len(s) {
-		l = len(s)
+	o := rd.offset
+	if rd.get() != eof {
+		return nil, &SyntaxError{"missing operator or extra expression", o}
 	}
-	return e, s[l:], nil
+	return e, nil
 }
 
 // parseitem parses item = { base64expr } | ( item* ) | display? simple-string.

@@ -25,7 +25,7 @@ func TestSExprs(t *testing.T) {
 			fails = subj[i+5:]
 			subj = subj[0: i]
 		}
-		e, _, err := sexpr.Parse(subj)
+		e, err := sexpr.Parse(subj)
 		if fails != "" {
 			switch {
 			case err == nil:
@@ -42,7 +42,7 @@ func TestSExprs(t *testing.T) {
 		// check canonical -> base64 -> read has same value
 		b64 := sexpr.Base64(e, sexpr.Canonical)
 		t.Logf("--> %s [%s]", e.String(), b64)
-		x, _, err := sexpr.Parse(b64)
+		x, err := sexpr.Parse(b64)
 		if err != nil {
 			t.Errorf("parse base64 encoding failed %s: %s", b64, err)
 			continue
