@@ -103,6 +103,7 @@ func (s *String) Els() []Expr {
 }
 
 // Equal reports whether s has the same value as e.
+// String and Binary compare byte strings.
 func (s *String) Equal(e Expr) bool {
 	switch t := e.(type) {
 	case *String:
@@ -179,6 +180,7 @@ func (b *Binary) Op() string {
 }
 
 // Equal reports whether b has the same value as e, including hint.
+// String and Binary compare byte strings.
 func (b *Binary) Equal(e Expr) bool {
 	switch t := e.(type) {
 	case *String:
