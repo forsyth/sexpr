@@ -3,11 +3,11 @@ S-expressions (`symbolic expressions') provide a way for programs to store and
 exchange tree-structured text and binary data. They are fundamental to the LISP
 language, but have wider application.
 
-This package provides the variant defined by [Rivest's Internet Draft] (4 May
+Package [sexpr] provides the variant defined by [Rivest's Internet Draft] (4 May
 1997), as used for instance by the Simple Public Key Infrastructure (SPKI). It
 provides a `canonical' form of S-expression, and an `advanced' form for display.
 They can convey binary data directly and efficiently, unlike some other schemes
-such as XML. The two forms are closely related and all can be read or written
+such as XML. The two forms are closely related and both can be read or written
 by this package, including a variant sometimes used for transport on links that
 are not 8-bit safe.
 
@@ -21,13 +21,61 @@ All forms start with the fundamental rules below, in extended BNF:
 	list ::= "(" sexpr* ")"
 
 That gives the recursive structure.
-The various representations ultimately differ only in how the byte string is represented
+
+Go representation
+
+Package [sexpr] represents S-expressions using four node types:
+two leaf types [String] and [Binary], a [List] of expressions,
+and an [Expr] interface type representing any of the three, so [List] is a list of [Expr].
+Given an [Expr] a Go type switch can determine the actual type (or nil).
+(Use *String and *Binary in the cases, since they are accessed with pointers.)
+[Expr] itself has operators such as [Equal], [IsList] and [Copy] that work
+on all node types.
+
+On input, the base 64 and hexadecimal notations are always [Binary];
+tokens and quoted strings are always [String];
+and raw strings are [Binary] unless they are completely valid UTF-8,
+when they are [String].
+
+A [String] has the text as a string and any hint:
+	type String struct {
+		S string
+		Hint string
+	}
+A string's contents is UTF-8.
+
+A [Binary] has a slice with the data and any hint:
+	type Binary struct {
+		Data []byte
+		Hint string
+	}
+
+A [List] has no visible structure, but method [Els] returns a slice of [Expr]s with the list's elements,
+and [Head] and [Tail] to fetch the first element of the list and the remainder.
+
+A [Reader] represents a stream of S-expressions and each call to [Read] returns
+the next [Expr] or an error, returning (nil, io.EOF) at end of file.
+
+In the common case where a string contains a single S-expression, [Parse] parses
+the string directly and returns the expression or an error.
+
+[SyntaxError] is the primary error, carrying a [Msg] and an [Offset] to aid
+diagnosis. The usual [Error] message includes the offset. Errors from
+lower-level packages are wrapped, except [io.EOF] and [io.UnexpectedEOF].
+For some constructions, such as missing terminators, the offset refers to the
+relevant opening character.
+
+All four types satisfy the [encoding.TextMarshaler], [encoding.BinaryMarshaler] and [fmt.Stringer] interfaces.
+
+S-expression variants
+
+The two representations differ only in how the byte string is represented
 and whether white space such as blanks or newlines can appear.
 
-Furthermore, the definition of `string' is also common to all forms:
+Furthermore, the definition of `string' is also common to both forms:
 
 	string ::= display? simple-string
-	display ::= "[" simple-string "]"
+	display ::= '[' simple-string ']'
 
 The optional bracketed `display' string provides information on how to present the associated byte string to a user.
 (“It has no other function. Many of the MIME types work here.”)
@@ -44,12 +92,12 @@ and when digitally signing an expression. It is defined by the complete set of
 rules below:
 
 	sexpr	::=	string | list
-	list	::=	"(" sexpr* ")"
+	list	::=	'(' sexpr* ')'
 	string	::=	display? simple-string
-	display	::=	"[" simple-string "]"
+	display	::=	'[' simple-string ']'
 	simple-string	::=	raw
-	raw	::=	nbytes ":" byte*
-	nbytes	::=	[1-9][0-9]+ | "0"
+	raw	::=	nbytes ':' byte*
+	nbytes	::=	[1-9][0-9]+ | '0'
 
 Its simple-string is a raw byte string. The primitive `byte' represents an
 8-bit byte. The length of every byte string is given explicitly by a preceding
@@ -67,7 +115,7 @@ Unquoted text is called a `token', and is restricted by the standard to a
 specific alphabet: it must contain only letters, digits, or characters from the
 set:
 
-	-./_:*+=
+	- . / _ : * + =
 
 Upper- and lower-case letters are distinct. Note that it must not start with a digit.
 That allows byte counts to be distinguished from tokens without
