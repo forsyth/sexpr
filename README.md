@@ -38,9 +38,10 @@ for the basic syntactic elements, and an **Expr** interface type to represent an
 **String** is specifically a UTF-8 **string** for convenient processing.
 
 All four types satisfy the **encoding.TextMarshaler**, **encoding.BinaryMarshaler** and **fmt.Stringer** interfaces.
-See the **go doc** for details.
 
 A **Reader** produces a stream of **Expr** values from a given [io.Reader] stream.
 
 In the simple case that the S-expression is in a single Go string, **Parse** will parse the string
 and return the **Expr**.
+
+See the **go doc** for details.
