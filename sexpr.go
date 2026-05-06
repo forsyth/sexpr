@@ -17,7 +17,7 @@ import (
 const (
 	MaxToken = 1024 * 1024 * 1024 // should be more than enough
 	eof      = -1
-	rivest   = true // enforce rule that token cannot start with digit
+	rivest   = false // enforce rule that token cannot start with digit
 )
 
 // Form selects between Canonical or Advanced format.
@@ -406,7 +406,6 @@ func (rd *Reader) get() rune {
 	c, w := utf8.DecodeRune(rd.buf[0:rd.nb])
 	rd.nb = 0
 	rd.w = w
-	fmt.Printf("[%c]", c)
 	return c
 }
 
@@ -619,11 +618,7 @@ func (rd *Reader) simpleString(c rune, hint string) (Expr, error) {
 			return nil, &SyntaxError{"missing token", rd.offset} // consume c to ensure progress on error
 		}
 		if c != eof {
-			fmt.Printf("CHAR[%c]", c)
 			rd.unget()
-		}
-		if c == eof {
-			fmt.Printf("EOF")
 		}
 		return &String{S: tok.String(), Hint: hint}, nil
 	}
