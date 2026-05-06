@@ -38,7 +38,7 @@ for the basic syntactic elements, and an **Expr** interface type to represent an
 
 All four types satisfy the **encoding.TextMarshaler**, **encoding.BinaryMarshaler** and **fmt.Stringer** interfaces.
 
-A **Reader** produces a stream of **Expr** values from a given [io.Reader] stream.
+A **Reader** produces a stream of **Expr** values from a given **io.Reader** stream.
 
 In the simple case that the S-expression is in a single Go string, **Parse** will parse the string
 and return the **Expr**.
