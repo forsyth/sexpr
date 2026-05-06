@@ -530,7 +530,7 @@ func addOffset(e error, offset int64) error {
 	return e
 }
 
-// isSpace reports whether c is a space according to the RFC.
+// isSpace reports whether c is a space according to the Rivest spec.
 func isSpace(c rune) bool {
 	return c == ' ' || c == '\r' || c == '\t' || c == '\n'
 }
@@ -546,7 +546,7 @@ func (rd *Reader) skipWS() rune {
 	}
 }
 
-// decimal parses an optional decimal prefix [1-9]|[0-9]+ | 0,
+// decimal collects an optional decimal prefix [1-9]|[0-9]+ | 0,
 // returning the next character to process.
 func (rd *Reader) decimal(sb *strings.Builder, c rune) rune {
 	if c == '0' {
@@ -564,7 +564,8 @@ func (rd *Reader) decimal(sb *strings.Builder, c rune) rune {
 func (rd *Reader) simpleString(c rune, hint string) (Expr, error) {
 	// the "optional length field" gives the length of the resulting
 	// byte string, for a base64 or quoted string.
-	// here, it is parsed and checked but otherwise unused.
+	// here, it is collected but otherwise unused,
+	// unless it forms the prefix for a token (if rivest is false).
 	var tok strings.Builder
 	// optional byte size in decimal for quoted strings and base64
 	// if rivest is false, also digits starting a token
@@ -581,7 +582,7 @@ func (rd *Reader) simpleString(c rune, hint string) (Expr, error) {
 		if err != nil {
 			return nil, err
 		}
-		return sform(data, hint)
+		return &Binary{Data: data, Hint: hint}, nil
 	case '#':
 		if tok.Len() != 0 {
 			return nil, &SyntaxError{"illegal length before hex string", rd.offset}
@@ -590,7 +591,7 @@ func (rd *Reader) simpleString(c rune, hint string) (Expr, error) {
 		if err != nil {
 			return nil, err
 		}
-		return sform(data, hint)
+		return &Binary{Data: data, Hint: hint}, nil
 	default:
 		if tok.Len() != 0 {
 			if c == ':' { // raw bytes
