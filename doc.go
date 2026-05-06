@@ -11,7 +11,7 @@ such as XML. The two forms are closely related and both can be read or written
 by this package, including a variant sometimes used for transport on links that
 are not 8-bit safe.
 
-S-expressions
+# S-expressions
 
 An S-expression is either a sequence of bytes (a byte string),
 or a parenthesised list of smaller S-expressions.
@@ -22,7 +22,7 @@ All forms start with the fundamental rules below, in extended BNF:
 
 That gives the recursive structure.
 
-Go representation
+# Go representation
 
 Package [sexpr] represents S-expressions using four node types:
 two leaf types [String] and [Binary], a [List] of expressions,
@@ -38,13 +38,16 @@ and raw strings are [Binary] unless they are completely valid UTF-8,
 when they are [String].
 
 A [String] has the text as a string and any hint:
+
 	type String struct {
 		S string
 		Hint string
 	}
+
 A string's contents is UTF-8.
 
 A [Binary] has a slice with the data and any hint:
+
 	type Binary struct {
 		Data []byte
 		Hint string
@@ -67,7 +70,7 @@ relevant opening character.
 
 All four types satisfy the [encoding.TextMarshaler], [encoding.BinaryMarshaler] and [fmt.Stringer] interfaces.
 
-S-expression variants
+# S-expression variants
 
 The two representations differ only in how the byte string is represented
 and whether white space such as blanks or newlines can appear.
@@ -85,7 +88,7 @@ The canonical and advanced forms differ in their definitions of `simple-string'.
 They always denote sequences of 8-bit bytes, but with different syntax (encodings).
 Two strings are equal iff their simple-strings encode the same byte strings, for both data and display.
 
-Canonical Form
+# Canonical Form
 
 `Canonical' form must be used when exchanging S-expressions between computers,
 and when digitally signing an expression. It is defined by the complete set of
@@ -105,7 +108,7 @@ decimal value `nbytes' (with no leading zeroes). There is no white space. It
 is `canonical' because it is uniquely defined for each S-expression. It is
 efficient to parse even on small computers.
 
-Advanced Form
+# Advanced Form
 
 `Advanced' form is more elaborate, with two main differences: not all byte
 strings need an explicit length, and binary data can be represented in printable
@@ -115,7 +118,7 @@ Unquoted text is called a `token', and is restricted by the standard to a
 specific alphabet: it must contain only letters, digits, or characters from the
 set:
 
-	- . / _ : * + =
+  - . / _ : * + =
 
 Upper- and lower-case letters are distinct. Note that it must not start with a digit.
 That allows byte counts to be distinguished from tokens without
@@ -165,7 +168,7 @@ replace the sequence by its decoded value, and resume parsing at the start of
 that byte string. Note the difference in syntax and interpretation from rule
 `base-64' above, which encodes a `simple-string' not an `sexpr'.
 
-Examples
+# Examples
 
 The following S-expression is in canonical form:
 

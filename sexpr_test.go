@@ -23,7 +23,7 @@ func TestSExprs(t *testing.T) {
 		fails := ""
 		if i := strings.Index(subj, "!ERR:"); i >= 0 {
 			fails = subj[i+5:]
-			subj = subj[0: i]
+			subj = subj[0:i]
 		}
 		e, err := sexpr.Parse(subj)
 		if fails != "" {
