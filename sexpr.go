@@ -42,6 +42,7 @@ type Expr interface {
 	IsList() bool
 
 	// Equal returns true iff e1 is equal (``deep comparison'') to e2.
+	// String and Binary compare byte strings.
 	Equal(Expr) bool
 
 	// Copy returns a copy (``deep copy'') of an expression.
@@ -103,10 +104,14 @@ func (s *String) Els() []Expr {
 
 // Equal reports whether s has the same value as e.
 func (s *String) Equal(e Expr) bool {
-	if t, ok := e.(*String); ok {
+	switch t := e.(type) {
+	case *String:
 		return s.S == t.S && s.Hint == t.Hint
+	case *Binary:
+		return bytes.Equal([]byte(s.S), t.Data) && s.Hint == t.Hint
+	default:
+		return false
 	}
-	return false
 }
 
 // Copy returns a copy of s.
@@ -175,10 +180,14 @@ func (b *Binary) Op() string {
 
 // Equal reports whether b has the same value as e, including hint.
 func (b *Binary) Equal(e Expr) bool {
-	if t, ok := e.(*Binary); ok {
+	switch t := e.(type) {
+	case *String:
+		return bytes.Equal([]byte(t.S), b.Data) && b.Hint == t.Hint
+	case *Binary:
 		return bytes.Equal(b.Data, t.Data) && b.Hint == t.Hint
+	default:
+		return false
 	}
-	return false
 }
 
 // Copy returns a copy of b as a new Expr.
