@@ -1,5 +1,4 @@
-# sexpr
-sexpr - SPKI/SDSI-compatible S-expression package
+# sexpr - SPKI/SDSI-compatible S-expression package
 
 S-expressions (`symbolic expressions') provide a way for programs to store and
 exchange tree-structured text and binary data. They are fundamental to the LISP
