@@ -20,3 +20,6 @@ test:V:
 
 clean:V:
 	go clean ./...
+
+push:V: fmt tidy vet test
+	git push

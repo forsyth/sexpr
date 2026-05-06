@@ -35,7 +35,7 @@ const (
 // For a similar reason, the IsList, Op and Args methods are
 // included in the interface, even though they are not essential.
 // Expr implements both binary and text encodings
-// (BinaryMarshaler and Textmarshaler), producing the
+// (BinaryAppender and TextAppender), producing the
 // Canonical and Advanced formats respectiively.
 type Expr interface {
 	// IsList tells whether the Expr is an inner node, a list.
@@ -122,7 +122,7 @@ func (s *String) Copy() Expr {
 	return &String{S: s.S, Hint: s.Hint}
 }
 
-// AppendText implements the TextMarshaler interface for a
+// AppendText implements the TextAppender interface for a
 // token or quoted string, appending the textual form to slice d
 // and returning the updated slice without error.
 func (s *String) AppendText(d []byte) ([]byte, error) {
@@ -138,7 +138,7 @@ func (s *String) AppendText(d []byte) ([]byte, error) {
 	return d, nil
 }
 
-// AppendBinary implements the BinaryMarshaler interface:
+// AppendBinary implements the BinaryAppender interface:
 // the binary version of a string in an S-expression is added to d.
 // The updated slice is returned without error.
 func (s *String) AppendBinary(d []byte) ([]byte, error) {
@@ -201,7 +201,7 @@ func (b *Binary) Copy() Expr {
 	return &Binary{Data: bytes.Clone(b.Data), Hint: b.Hint}
 }
 
-// AppendText implements the TextMarshaler interface for a
+// AppendText implements the TextAppender interface for a
 // binary string, appending its textual form to slice d
 // and returning the updated slice without error.
 func (b *Binary) AppendText(d []byte) ([]byte, error) {
@@ -222,7 +222,7 @@ func (b *Binary) AppendText(d []byte) ([]byte, error) {
 	return d, nil
 }
 
-// AppendBinary implements the BinaryMarshaler interface:
+// AppendBinary implements the BinaryAppender interface:
 // it appends the binary representation of a Binary leaf to
 // d and returns the updated slice, without error.
 func (b *Binary) AppendBinary(d []byte) ([]byte, error) {
@@ -346,7 +346,7 @@ func (l List) Tail() List {
 	return l[1:]
 }
 
-// AppendBinary implements the BinaryMarshaler interface:
+// AppendBinary implements the BinaryAppender interface:
 // it appends the binary representation of a list to
 // d and returns the updated slice without error.
 func (l List) AppendBinary(d []byte) ([]byte, error) {
@@ -357,7 +357,7 @@ func (l List) AppendBinary(d []byte) ([]byte, error) {
 	return append(d, ')'), nil
 }
 
-// AppendText implements the TextMarshaler interface:
+// AppendText implements the TextAppender interface:
 // it appends the text (“advanced”) representation of a list to
 // d and returns the updated slice without error.
 func (l List) AppendText(d []byte) ([]byte, error) {

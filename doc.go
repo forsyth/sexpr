@@ -68,7 +68,7 @@ lower-level packages are wrapped, except [io.EOF] and [io.UnexpectedEOF].
 For some constructions, such as missing terminators, the offset refers to the
 relevant opening character.
 
-All four types satisfy the [encoding.TextMarshaler], [encoding.BinaryMarshaler] and [fmt.Stringer] interfaces.
+All four types satisfy the [encoding.TextAppender], [encoding.BinaryAppender] and [fmt.Stringer] interfaces.
 
 # S-expression variants
 
