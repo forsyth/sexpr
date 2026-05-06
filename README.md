@@ -4,7 +4,7 @@ S-expressions (`symbolic expressions') provide a way for programs to store and
 exchange tree-structured text and binary data. They are fundamental to the LISP
 language, but have wider application.
 
-*Sexpr* provides the variant defined by [Rivest's Internet Draft](https://github.com/forsyth/sexpr/blob/main/lib/sexp)
+*Sexpr* is a small Go package to work with the variant defined by [Rivest's Internet Draft](https://github.com/forsyth/sexpr/blob/main/lib/sexp)
 (4 May 1997), as used for instance by the Simple Public Key Infrastructure (SPKI).
 It can convey binary data directly and efficiently, unlike some other schemes
 such as XML. It provides a *canonical* form of S-expression, and an *advanced* form for display.
