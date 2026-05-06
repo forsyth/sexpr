@@ -137,6 +137,6 @@ The following is an S-expression in advanced form:
 Note that advanced form contains canonical form as a subset; here it is used for
 the innermost list.
 
-[Rivest's Internet Draft]: https://github.com/forsyth/sexpr/lib/sexp
+[Rivest's Internet Draft]: https://github.com/forsyth/sexpr/blob/main/lib/sexp
 */
 package sexpr
