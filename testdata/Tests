@@ -23,3 +23,11 @@
 (a (#161718192021222324#))
 (a (#1617#))
 (a "\"\\\b\f\n\t\r\vX")
+(a	!ERR:offset 0: unclosed '('
+)a	!ERR:offset 1: missing token
+(a "no end to this	!ERR:offset 4: unclosed quoted string
+(a)(b)	!ERR:offset 3: missing operator or extra expression
+[whatnow(a)	!ERR:offset 0: missing ] in display hint
+43#2525235#	!ERR:offset 3: illegal length before hex string
+"\999emergency"	!ERR:offset 2: illegal octal escape
+"\xzyoo"	!ERR:offset 2: illegal hex escape
