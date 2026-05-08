@@ -7,7 +7,6 @@ import (
 	"encoding/hex"
 	"fmt"
 	"io"
-	"slices"
 	"strconv"
 	"strings"
 	"unicode"
@@ -41,19 +40,20 @@ type Expr interface {
 	// IsList tells whether the Expr is an inner node, a list.
 	IsList() bool
 
-	// Equal returns true iff e1 is equal (``deep comparison'') to e2.
-	// String and Binary compare byte strings.
+	// Equal tells whether e1 is equal to e2 by ``deep comparison''.
+	// String and Binary compare the underlying byte strings.
 	Equal(Expr) bool
 
-	// Copy returns a copy (``deep copy'') of an expression.
+	// Copy returns a copy of an expression (``deep copy'').
 	Copy() Expr
 
-	// Els returns the elements of an expression, a single element if it is a leaf.
+	// Els returns the elements of an expression: the list, or a single element if it is a leaf.
 	Els() []Expr
 
-	// Op returns the text of the operator of the expression.
-	// The operator is the string itself in the case of a text expression,
+	// Op returns the text of the `operator' of an expression.
+	// The operator is the string itself in the case of a String,
 	// or the initial expression in a list, if that is a text expression.
+	// Otherwise the result is the empty string.
 	Op() string
 
 	// Args returns the arguments to an operator, or nil if there are none.
@@ -240,9 +240,25 @@ func (b *Binary) String() string {
 // List is an interior node: a list of expressions.
 type List []Expr
 
-// NewList returns a new list = (list | string)*.
-func NewList(els []Expr) List {
-	return List(slices.Clone(els))
+// NewList returns a new list = (list | string)*
+// from the element arguments,
+// each of type string, []byte or Expr.
+// Other types produce a panic.
+func NewList(els ...any) List {
+	l := make([]Expr, len(els))
+	for i, e := range els {
+		switch v := e.(type) {
+		case string:
+			l[i] = NewString(v)
+		case []byte:
+			l[i] = NewBinary(v)
+		case Expr:
+			l[i] = v
+		default:
+			panic("unexpected type to NewList")
+		}
+	}
+	return l
 }
 
 func (l List) isLeaf() bool {
@@ -254,7 +270,7 @@ func (l List) IsList() bool {
 	return true
 }
 
-// Op returns the operator name in the first listed string,
+// Op returns the operator name, the first String in the list,
 // or an empty string if there is no operator.
 func (l List) Op() string {
 	if len(l) == 0 {
