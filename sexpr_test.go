@@ -52,7 +52,7 @@ func TestSExprs(t *testing.T) {
 		}
 	}
 	type setest struct {
-		exp sexpr.Expr
+		exp  sexpr.Expr
 		text string
 	}
 	s5 := sexpr.NewHintedBinary([]byte{0xF0, 0xF1}, "hint5")
@@ -60,7 +60,7 @@ func TestSExprs(t *testing.T) {
 	if err != nil {
 		t.Errorf("parse failed: expected Expr, no error; got %s", err)
 	}
-	setests := []setest {
+	setests := []setest{
 		{
 			sexpr.NewList(
 				"watcher",
@@ -80,7 +80,7 @@ func TestSExprs(t *testing.T) {
 		},
 	}
 	for i, st := range setests {
-		if s := st.exp.String();  s != st.text {
+		if s := st.exp.String(); s != st.text {
 			t.Errorf("NewList test %d %#v want %s; got %s", i, st.exp, st.text, s)
 		}
 	}
