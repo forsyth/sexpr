@@ -243,17 +243,20 @@ type List []Expr
 // NewList returns a new list = (list | string)*
 // from the element arguments,
 // each of type string, []byte or Expr.
+// A nil value adds nothing.
 // Other types produce a panic.
 func NewList(els ...any) List {
-	l := make([]Expr, len(els))
-	for i, e := range els {
+	l := make(List, 0, len(els))
+	for _, e := range els {
 		switch v := e.(type) {
+		case nil:
+			// skip
 		case string:
-			l[i] = NewString(v)
+			l = append(l, NewString(v))
 		case []byte:
-			l[i] = NewBinary(v)
+			l = append(l, NewBinary(v))
 		case Expr:
-			l[i] = v
+			l = append(l, v)
 		default:
 			panic("unexpected type to NewList")
 		}

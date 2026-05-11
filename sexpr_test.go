@@ -74,7 +74,9 @@ func TestSExprs(t *testing.T) {
 				"123backagain456",
 				sexpr.NewList("op", "arg1", s5, []byte{1, 2, 3, 4, 0xAF, 0xFB}),
 				[]byte{0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 0x88},
+				nil, // adds nothing
 				s6,
+				nil, // adds nothing
 			),
 			"(\"123backagain456\" (op arg1 [hint5]#f0f1# #01020304affb#) |gIGCg4SFhoeI| (nested (op (down left) up) top-left))",
 		},
